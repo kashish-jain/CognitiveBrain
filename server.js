@@ -15,9 +15,10 @@ app.use(bodyParser.urlencoded({
 }));
 
 var answerReceived = "";
+var questionReceived = "";
 
 app.get('/', (req, res) => {
-  res.render('index', {bot_answer: answerReceived});
+  res.render('index', {bot_answer: answerReceived, bot_followup: questionReceived});
 });
 
 app.listen(3000, function() {
@@ -46,12 +47,7 @@ var question = {
     'top': 3
 };
 
-let pretty_print = function (s) {
-	//return JSON.stringify(JSON.parse(s), null, 4);
-  var data = JSON.parse(s);
-  return data.answers[0].answer;
-  //return data.answers["answer"];
-};
+
 
 // callback is the function to call when we have the entire response.
 let response_handler = function (callback, response) {
@@ -106,6 +102,25 @@ let get_answers = function (path, req, callback) {
 };
 
 
+let pretty_print_answer = function (s) {
+	//return JSON.stringify(JSON.parse(s), null, 4);
+  console.log(JSON.stringify(JSON.parse(s), null, 4));
+  var data = JSON.parse(s);
+  return data.answers[0].answer;
+  //return data.answers["answer"];
+};
+
+let pretty_print_question = function (s) {
+	//return JSON.stringify(JSON.parse(s), null, 4);
+  var data = JSON.parse(s);
+  if(data.answers[0].context.prompts[0] && data.answers[0].context.prompts[0].displayText){
+    return data.answers[0].context.prompts[0].displayText;
+  } else {
+    return "";
+  }
+  //return data.answers["answer"];
+};
+
 
 app.post("/", function(req,res){
   question.question = req.body.quesFromUser;
@@ -115,11 +130,10 @@ app.post("/", function(req,res){
   let content = JSON.stringify(question);
   get_answers (method, content, function (result) {
   // Write out the response from the /knowledgebases/create method.
-    answerReceived = pretty_print(result);
-  	console.log (pretty_print(result));
+    answerReceived = pretty_print_answer(result);
+//  	console.log (pretty_print_answer(result));
+    questionReceived = pretty_print_question(result);
     res.redirect("/");
   });
-
-
 
 });
