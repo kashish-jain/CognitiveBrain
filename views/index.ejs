@@ -1,16 +1,112 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
+<head>
+    <title>Google Homepage</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel = "stylesheet" href = "gbot.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  
     <meta charset="utf-8">
-    <title>Our bot</title>
-  </head>
-  <body>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <form class="" action="/" method="post">
-      <input type="text" name="quesFromUser" value="">
-      <button type="submit" name=""></button>
-    </form>
-    <h1 class="botAnswer"> <%= bot_answer %> </h1>
-    <h1 class= "botFollowUp"> <%= bot_followup %> </h1>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  
+  
+  </head>
+  
+  <body style="background-color: grey; background-image: url('background.jpg'); background-repeat: no-repeat; background-size: cover;">
+    <header>
+      <nav>
+        <ul id="nav_bar">
+        
+        </ul>  
+      </nav>  
+    </header>  
+    
+    <!-- GOOGLE IMG -->  
+<table style="table-layout:fixed; width: 100%;"> 
+
+  <tr> 
+<td>   <div class="google">
+    <a href="#" id="google_logo"><img src="bot.png"/></a>
+  </div> </td>
+
+<td>   <div class="form">  
+    
+<h1 class="botAnswer text-high"> <%= bot_answer %> </h1>
+
+<h1 class= "botFollowUp text-high"> <%= bot_followup %> </h1>
+
+
+
+<form class="" action="/" method="post">
+  <input type="text" name="quesFromUser" value="">
+  <button type="submit" class="btn btn-primary">Send</button>
+  
+  </form>
+
+</div>
+</td>
+
+<td>  <div class="google">
+    <a href="#" id="google_logo"><img src="human.png"/></a>
+  </div>
+
+</td>
+
+
+  </tr>
+</table>
+
+  
+    
+    <!-- FORM SEARCH -->  
+  
+
+
+    
+  
   </body>
-</html>
+
+  <script> // set up text to print, each item in array is new line
+      var aText = new Array(
+      "There are only 10 types of people in the world:", 
+      "Those who understand binary, and those who don't"
+      );
+      var iSpeed = 100; // time delay of print out
+      var iIndex = 0; // start printing array at this posision
+      var iArrLength = aText[0].length; // the length of the text array
+      var iScrollAt = 20; // start scrolling up at this many lines
+       
+      var iTextPos = 0; // initialise text position
+      var sContents = ''; // initialise contents variable
+      var iRow; // initialise current row
+       
+      function typewriter()
+      {
+       sContents =  ' ';
+       iRow = Math.max(0, iIndex-iScrollAt);
+       var destination = document.getElementById("typedtext");
+       
+       while ( iRow < iIndex ) {
+        sContents += aText[iRow++] + '<br />';
+       }
+       destination.innerHTML = sContents + aText[iIndex].substring(0, iTextPos) + "_";
+       if ( iTextPos++ == iArrLength ) {
+        iTextPos = 0;
+        iIndex++;
+        if ( iIndex != aText.length ) {
+         iArrLength = aText[iIndex].length;
+         setTimeout("typewriter()", 500);
+        }
+       } else {
+        setTimeout("typewriter()", iSpeed);
+       }
+      }
+      
+      
+      typewriter(); </script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
