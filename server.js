@@ -6,6 +6,9 @@ const request = require('request');
 let fs = require ('fs');
 let https = require ('https');
 let ejs = require('ejs');
+//const CognitiveServicesCredentials = require("ms-rest-azure").CognitiveServicesCredentials;
+//const TextAnalyticsAPIClient = require("azure-cognitiveservices-textanalytics");
+
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -13,6 +16,8 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
+var responseArray = [];
 
 var answerReceived = "";
 var questionReceived = "";
@@ -94,7 +99,6 @@ let post = function (path, content, callback) {
 
 // callback is the function to call when we have the response from the /knowledgebases POST method.
 let get_answers = function (path, req, callback) {
-	console.log ('Calling ' + host + path + '.');
 // Send the POST request.
 	post (path, req, function (response) {
 		callback (response.body);
@@ -104,7 +108,6 @@ let get_answers = function (path, req, callback) {
 
 let pretty_print_answer = function (s) {
 	//return JSON.stringify(JSON.parse(s), null, 4);
-  console.log(JSON.stringify(JSON.parse(s), null, 4));
   var data = JSON.parse(s);
   return data.answers[0].answer;
   //return data.answers["answer"];
@@ -124,6 +127,7 @@ let pretty_print_question = function (s) {
 
 app.post("/", function(req,res){
   question.question = req.body.quesFromUser;
+  responseArray.push(req.body.quesFromUser);
   // Convert the request to a string.
   // here calling our API to get answer for our question
 
@@ -133,7 +137,89 @@ app.post("/", function(req,res){
     answerReceived = pretty_print_answer(result);
 //  	console.log (pretty_print_answer(result));
     questionReceived = pretty_print_question(result);
-    res.redirect("/");
+    // now checking if enough responses received
+    if(responseArray.length >= 3){
+      var str = "";
+      for(var i = 0; i < responseArray.length; ++i){
+        str = str + responseArray[i] + ".";
+      }
+      var posting = {
+        "documents" : [
+          {
+            "id": "1",
+            "language": "en",
+            "text": str
+          }
+        ]
+      };
+      console.log(str);
+      const options = {
+        url: "https://firsttextana.cognitiveservices.azure.com/text/analytics/v2.1/keyPhrases",
+        headers: {
+          'Ocp-Apim-Subscription-Key': 'd0a510ba5ecb4882947f86028fde3b18' ,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(posting)
+      };
+
+      request.post(options, (error, response, body) => {
+        if (error) {
+          console.log('Error: ', error);
+          return;
+        }
+        let jsonResponse = JSON.stringify(JSON.parse(body), null, '  ');
+        console.log('JSON Response\n');
+        console.log(jsonResponse);
+      });
+      res.send("enough talking");
+
+    } else{
+      res.redirect("/");
+    }
+
+
+
   });
 
 });
+
+//
+// var posting = {
+//     "documents": [
+//         {
+//             "id": "1",
+//             "language": "en",
+//             "text": "happy sad crazy."
+//         },
+//         {
+//             "id": "2",
+//             "language": "en",
+//             "text": "The Great Depression began in 1929. By 1933, the GDP in America fell by 25%."
+//         }
+//     ]
+// };
+
+
+
+
+//
+// const options = {
+//   url: "https://firsttextana.cognitiveservices.azure.com/text/analytics/v2.1/keyPhrases",
+//   headers: {
+//     'Ocp-Apim-Subscription-Key': 'd0a510ba5ecb4882947f86028fde3b18' ,
+//     'Content-Type': 'application/json',
+//     'Accept': 'application/json'
+//   },
+//   body: JSON.stringify(posting)
+// };
+//
+// request.post(options, (error, response, body) => {
+//   if (error) {
+//     console.log('Error: ', error);
+//     return;
+//   }
+//   let jsonResponse = JSON.stringify(JSON.parse(body), null, '  ');
+//   console.log('JSON Response\n');
+//   console.log(jsonResponse);
+// });
