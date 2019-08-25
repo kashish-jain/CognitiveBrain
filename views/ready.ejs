@@ -11,10 +11,12 @@
   <body style="background-color: grey; background-image: url('background.jpg'); background-repeat: no-repeat; background-size: cover; height: 100%">
     <div class="main">
       <h1>Azure Bot was really smart and has created some content for you.</h1>
-      <form class="" action="/search.ejs" method="get">
-       <button type="submit"  class="btn btn-dark btn-lg" name="ready">I am ready</button>
+      <form class="" action="/resultImages" method="post">
+       <button type="submit"  class="btn btn-dark btn-lg" name="ready" style="padding: 10px; margin: 10px;">Images</button>
       </form>
-      <a href="/"><button type="button"  class="btn btn-dark btn-lg" name="notReady">Not Ready</button></a>
+      <form class="" action="/resultVideos" method="post">
+      <a href="/"><button type="submit"  class="btn btn-dark btn-lg" name="notReady" style="padding: 10px; margin: 10px;">Videos</button></a>
+      </form>
     </div>
 
 

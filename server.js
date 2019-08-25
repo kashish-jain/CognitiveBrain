@@ -44,7 +44,7 @@ let endpoint_key = "1cd08387-6b86-422e-ab16-0c15b4468261";
 // NOTE: Replace this with a valid knowledge base ID.
 // Make sure you have published the knowledge base with the
 // POST /knowledgebases/{knowledge base ID} method.
-let kb = "b859dec7-a364-4bb8-9aff-856c10be9cf3";
+let kb = "1305166b-d9e7-4490-8149-6472d342e435";
 
 let method = "/qnamaker/knowledgebases/" + kb + "/generateAnswer";
 
@@ -139,7 +139,7 @@ app.post("/", function(req,res){
 //  	console.log (pretty_print_answer(result));
     questionReceived = pretty_print_question(result);
     // now checking if enough responses received
-    if(responseArray.length >= 3){
+    if(responseArray.length >= 10){
       var str = "";
       for(var i = 0; i < responseArray.length; ++i){
         str = str + responseArray[i] + ".";
@@ -182,35 +182,20 @@ app.post("/", function(req,res){
   });
 });
 
-keyPhrases.push("motivation", "latest memes");
 
-app.get("/search.ejs", function(req, res){
-//   let subscriptionKey = 'a1e1e52d233f4de2b1dfffec98bd55ab';
-//   let host = 'api.cognitive.microsoft.com';
-//   let path = '/bing/v7.0/images/search';
-     let term = 'motivational';
-//
-//   let request_params = {
-//     method : 'GET',
-//     hostname : host,
-//     path : path + '?q=' + encodeURIComponent(search),
-//     headers : {
-//     'Ocp-Apim-Subscription-Key' : subscriptionKey,
-//     }
-// };
-//
-//   let newreq = https.request(request_params, response_handler);
-//   newreq.end();
-//
-//   let response_handler_new = function (response) {
-//     let body = '';
-// };
-//
-//
+var resultsArray = [];
+app.post("/resultImages", function(req, res){
+  keyPhrases.push("motivation", "memes", "motivational quotes", "career", "focus", "meditation");
+  var querryArray = [];
+  var len = keyPhrases.length;
+  for(var i = 0; i < 20; ++i){
+    var rando = Math.floor(Math.random() * 10000000000000000) % len;
+    querryArray.push(keyPhrases[rando]);
+  }
 
-const SUBSCRIPTION_KEY = 'a1e1e52d233f4de2b1dfffec98bd55ab';
+     const SUBSCRIPTION_KEY = 'a1e1e52d233f4de2b1dfffec98bd55ab';
 
-var newArrayElements = ["1.png" , "1.png", "1.png", "1.png", "1.png", "1.png" , "1.png", "1.png", "1.png", "1.png"] 
+//var newArrayElements = ["1.png" , "1.png", "1.png", "1.png", "1.png", "1.png" , "1.png", "1.png", "1.png", "1.png"] 
 
 // app.get('/', (req, res) => {
 //   res.render('search', {newArrayElements: newArrayElements});
@@ -228,21 +213,119 @@ function bingWebSearch(query) {
     res.on('end', () => {
       for (var header in res.headers) {
         if (header.startsWith("bingapis-") || header.startsWith("x-msedge-")) {
-          console.log(header + ": " + res.headers[header]);
+  //        console.log(header + ": " + res.headers[header]);
         }
       }
-      console.log('\nJSON Response:\n');
-      console.dir(JSON.parse(body), { colors: false, depth: null });
-    })
+      var index = Math.ceil((Math.random() * 10000000000)) % 25;
+
+  //    console.log('\nJSON Response:\n');
+      var JSONres = JSON.parse(body);
+    //  console.dir(JSON.parse(body), { colors: false, depth: null });
+    //console.log(JSONres.value[index].thumbnailUrl);
+    resultsArray.push(JSONres.value[index].thumbnailUrl);
+  });
     res.on('error', e => {
       console.log('Error: ' + e.message);
-      throw e
+      throw e;
     });
   });
 }
-bingWebSearch(term);
+//bingWebSearch(term);
 //res.send("ok sdlkfjslkfsjflksjflk");
 //res.send("sejfdkjfhgfkj");
-res.render('search', {newArrayElements:newArrayElements});
+//res.render('search', {newArrayElements:newArrayElements});
 
+//bingWebSearch("motivational");
+for(var i = 0; i < 20; ++i){
+  let term = querryArray[i];
+  console.log("query = " + term + "/n");
+  bingWebSearch(term);
+}
+
+res.redirect("/search.ejs");
+// res.render("search", {resultsArray:resultsArray});
 });
+
+app.get("/search.ejs", function(req, res){
+  res.render("search", {resultsArray:resultsArray});
+});
+
+
+
+
+
+
+var resultsVideoArray = [];
+
+
+app.post("/resultVideos", function(req, res){
+  keyPhrases.push("motivation", "memes", "motivational quotes", "career", "focus", "meditation");
+  var querryArray = [];
+  var len = keyPhrases.length;
+  for(var i = 0; i < 20; ++i){
+    var rando = Math.floor(Math.random() * 10000000000000000) % len;
+    querryArray.push(keyPhrases[rando]);
+  }
+
+     const SUBSCRIPTION_KEY = 'a1e1e52d233f4de2b1dfffec98bd55ab';
+
+//var newArrayElements = ["1.png" , "1.png", "1.png", "1.png", "1.png", "1.png" , "1.png", "1.png", "1.png", "1.png"] 
+
+// app.get('/', (req, res) => {
+//   res.render('search', {newArrayElements: newArrayElements});
+// });
+
+
+function bingWebSearchVideo(query) {
+  https.get({
+    hostname: 'canadacentral.api.cognitive.microsoft.com',
+    path:     '/bing/v7.0/videos/search?q=' + encodeURIComponent(query),
+    headers:  { 'Ocp-Apim-Subscription-Key': SUBSCRIPTION_KEY },
+  }, res => {
+    let body = '';
+    res.on('data', part => body += part);
+    res.on('end', () => {
+      for (var header in res.headers) {
+        if (header.startsWith("bingapis-") || header.startsWith("x-msedge-")) {
+  //        console.log(header + ": " + res.headers[header]);
+        }
+      }
+      var index = Math.ceil((Math.random() * 100000000000000)) % 20;
+
+  //    console.log('\nJSON Response:\n');
+      var JSONres = JSON.parse(body);
+    //  console.dir(JSON.parse(body), { colors: false, depth: null });
+    //console.log(JSONres.value[index].thumbnailUrl);
+    var cont = (JSONres.value[index].contentUrl);
+
+
+
+
+  });
+    res.on('error', e => {
+      console.log('Error: ' + e.message);
+      throw e;
+    });
+  });
+}
+
+
+
+for(var i = 0; i < 20; ++i){
+  let term = querryArray[i];
+  console.log("query = " + term + "/n");
+  bingWebSearchVideo(term);
+}
+
+res.redirect("/searchvideos.ejs");
+// res.render("search", {resultsArray:resultsArray});
+});
+
+app.get("/searchvideos.ejs", function(req, res){
+  res.render("searchvideos", {resultsVideoArray:resultsVideoArray});
+});
+
+
+
+
+
