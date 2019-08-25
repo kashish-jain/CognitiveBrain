@@ -9,9 +9,6 @@ let ejs = require('ejs');
 //const CognitiveServicesCredentials = require("ms-rest-azure").CognitiveServicesCredentials;
 //const TextAnalyticsAPIClient = require("azure-cognitiveservices-textanalytics");
 
-
-
-
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -213,6 +210,13 @@ app.get("/search.ejs", function(req, res){
 
 const SUBSCRIPTION_KEY = 'a1e1e52d233f4de2b1dfffec98bd55ab';
 
+var newArrayElements = ["1.png" , "1.png", "1.png", "1.png", "1.png", "1.png" , "1.png", "1.png", "1.png", "1.png"] 
+
+// app.get('/', (req, res) => {
+//   res.render('search', {newArrayElements: newArrayElements});
+// });
+
+
 function bingWebSearch(query) {
   https.get({
     hostname: 'canadacentral.api.cognitive.microsoft.com',
@@ -237,6 +241,8 @@ function bingWebSearch(query) {
   });
 }
 bingWebSearch(term);
-res.send("ok here we are");
+//res.send("ok sdlkfjslkfsjflksjflk");
+//res.send("sejfdkjfhgfkj");
+res.render('search', {newArrayElements:newArrayElements});
 
 });
