@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 var responseArray = [];
-
+var keyPhrases = [];
 var answerReceived = "";
 var questionReceived = "";
 
@@ -52,8 +52,8 @@ let kb = "b859dec7-a364-4bb8-9aff-856c10be9cf3";
 let method = "/qnamaker/knowledgebases/" + kb + "/generateAnswer";
 
 var question = {
-    'question': 'What is your name',
-    'top': 3
+    'question': 'Hello',
+    //'top': 3
 };
 
 
@@ -166,17 +166,18 @@ app.post("/", function(req,res){
         },
         body: JSON.stringify(posting)
       };
-
+      var jsonResponse = "";
       request.post(options, (error, response, body) => {
         if (error) {
           console.log('Error: ', error);
           return;
         }
-        let jsonResponse = JSON.stringify(JSON.parse(body), null, '  ');
+        jsonResponse = JSON.parse(body);
         console.log('JSON Response\n');
-        console.log(jsonResponse);
+        keyPhrases = jsonResponse.documents[0].keyPhrases;
+        console.log(jsonResponse.documents[0].keyPhrases);
+        res.render("ready");
       });
-      res.send("enough talking");
 
     } else{
       res.redirect("/");
@@ -188,42 +189,7 @@ app.post("/", function(req,res){
 
 });
 
-//
-// var posting = {
-//     "documents": [
-//         {
-//             "id": "1",
-//             "language": "en",
-//             "text": "happy sad crazy."
-//         },
-//         {
-//             "id": "2",
-//             "language": "en",
-//             "text": "The Great Depression began in 1929. By 1933, the GDP in America fell by 25%."
-//         }
-//     ]
-// };
 
-
-
-
-//
-// const options = {
-//   url: "https://firsttextana.cognitiveservices.azure.com/text/analytics/v2.1/keyPhrases",
-//   headers: {
-//     'Ocp-Apim-Subscription-Key': 'd0a510ba5ecb4882947f86028fde3b18' ,
-//     'Content-Type': 'application/json',
-//     'Accept': 'application/json'
-//   },
-//   body: JSON.stringify(posting)
-// };
-//
-// request.post(options, (error, response, body) => {
-//   if (error) {
-//     console.log('Error: ', error);
-//     return;
-//   }
-//   let jsonResponse = JSON.stringify(JSON.parse(body), null, '  ');
-//   console.log('JSON Response\n');
-//   console.log(jsonResponse);
-// });
+app.get("/search.ejs", function(req, res){
+  res.send("ok here we are");
+});
