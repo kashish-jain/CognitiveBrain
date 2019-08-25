@@ -185,33 +185,18 @@ app.post("/", function(req,res){
   });
 });
 
-keyPhrases.push("motivation", "latest memes");
+keyPhrases.push("motivation", "memes", "jokes", "motivational quotes");
 
-app.get("/search.ejs", function(req, res){
-//   let subscriptionKey = 'a1e1e52d233f4de2b1dfffec98bd55ab';
-//   let host = 'api.cognitive.microsoft.com';
-//   let path = '/bing/v7.0/images/search';
-     let term = 'motivational';
-//
-//   let request_params = {
-//     method : 'GET',
-//     hostname : host,
-//     path : path + '?q=' + encodeURIComponent(search),
-//     headers : {
-//     'Ocp-Apim-Subscription-Key' : subscriptionKey,
-//     }
-// };
-//
-//   let newreq = https.request(request_params, response_handler);
-//   newreq.end();
-//
-//   let response_handler_new = function (response) {
-//     let body = '';
-// };
-//
-//
+var resultsArray = [];
+app.post("/resultImages", function(req, res){
+  var querryArray = [];
+  var len = keyPhrases.length;
+  for(var i = 0; i < 20; ++i){
+    var rando = Math.floor(Math.random() * len);
+    querryArray.push(keyPhrases[rando]);
+  }
 
-const SUBSCRIPTION_KEY = 'a1e1e52d233f4de2b1dfffec98bd55ab';
+     const SUBSCRIPTION_KEY = 'a1e1e52d233f4de2b1dfffec98bd55ab';
 
 function bingWebSearch(query) {
   https.get({
@@ -224,19 +209,34 @@ function bingWebSearch(query) {
     res.on('end', () => {
       for (var header in res.headers) {
         if (header.startsWith("bingapis-") || header.startsWith("x-msedge-")) {
-          console.log(header + ": " + res.headers[header]);
+  //        console.log(header + ": " + res.headers[header]);
         }
       }
-      console.log('\nJSON Response:\n');
-      console.dir(JSON.parse(body), { colors: false, depth: null });
-    })
+      var index = Math.ceil(Math.random() * 10);
+
+  //    console.log('\nJSON Response:\n');
+      var JSONres = JSON.parse(body);
+    //  console.dir(JSON.parse(body), { colors: false, depth: null });
+    //console.log(JSONres.value[index].thumbnailUrl);
+    resultsArray.push(JSONres.value[index].thumbnailUrl);
+  });
     res.on('error', e => {
       console.log('Error: ' + e.message);
-      throw e
+      throw e;
     });
   });
 }
-bingWebSearch(term);
-res.send("ok here we are");
 
+//bingWebSearch("motivational");
+for(var i = 0; i < 20; ++i){
+  let term = querryArray[i];
+  bingWebSearch(term);
+}
+
+res.redirect("/search.ejs");
+// res.render("search", {resultsArray:resultsArray});
+});
+
+app.get("/search.ejs", function(req, res){
+  res.render("search", {resultsArray:resultsArray});
 });
