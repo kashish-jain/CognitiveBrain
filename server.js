@@ -182,14 +182,61 @@ app.post("/", function(req,res){
     } else{
       res.redirect("/");
     }
-
-
-
   });
-
 });
 
+keyPhrases.push("motivation", "latest memes");
 
 app.get("/search.ejs", function(req, res){
-  res.send("ok here we are");
+//   let subscriptionKey = 'a1e1e52d233f4de2b1dfffec98bd55ab';
+//   let host = 'api.cognitive.microsoft.com';
+//   let path = '/bing/v7.0/images/search';
+     let term = 'motivational';
+//
+//   let request_params = {
+//     method : 'GET',
+//     hostname : host,
+//     path : path + '?q=' + encodeURIComponent(search),
+//     headers : {
+//     'Ocp-Apim-Subscription-Key' : subscriptionKey,
+//     }
+// };
+//
+//   let newreq = https.request(request_params, response_handler);
+//   newreq.end();
+//
+//   let response_handler_new = function (response) {
+//     let body = '';
+// };
+//
+//
+
+const SUBSCRIPTION_KEY = 'a1e1e52d233f4de2b1dfffec98bd55ab';
+
+function bingWebSearch(query) {
+  https.get({
+    hostname: 'canadacentral.api.cognitive.microsoft.com',
+    path:     '/bing/v7.0/images/search?q=' + encodeURIComponent(query),
+    headers:  { 'Ocp-Apim-Subscription-Key': SUBSCRIPTION_KEY },
+  }, res => {
+    let body = '';
+    res.on('data', part => body += part);
+    res.on('end', () => {
+      for (var header in res.headers) {
+        if (header.startsWith("bingapis-") || header.startsWith("x-msedge-")) {
+          console.log(header + ": " + res.headers[header]);
+        }
+      }
+      console.log('\nJSON Response:\n');
+      console.dir(JSON.parse(body), { colors: false, depth: null });
+    })
+    res.on('error', e => {
+      console.log('Error: ' + e.message);
+      throw e
+    });
+  });
+}
+bingWebSearch(term);
+res.send("ok here we are");
+
 });
